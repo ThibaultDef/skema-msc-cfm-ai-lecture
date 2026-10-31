@@ -1,0 +1,14 @@
+[project]
+name = "skema-cfm"
+version = "0.1.0"
+description = "Python project dedicated to CFM course at Skema."
+readme = "README.md"
+authors = [
+    { name = "ThibaultDef", email = "defourneau.thibault@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = []
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
