@@ -14,8 +14,8 @@ from langgraph.graph import END, START, StateGraph
 
 from ...case import CaseSnapshot, load_case
 from ...models import create_model
-from ..tools_agent.graph import build_graph as build_tools_graph
 from ..rag_agent.graph import build_graph as build_rag_graph
+from ..tools_agent.graph import build_graph as build_tools_graph
 from .nodes import (
     make_finalize_node,
     make_rag_subgraph_node,

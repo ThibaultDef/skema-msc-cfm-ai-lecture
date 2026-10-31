@@ -14,9 +14,9 @@ from typing import Any
 import streamlit as st
 from dotenv import load_dotenv
 
+from ..agents.tools_agent.settings import FINANCE_TOOL_ALLOWLIST
 from ..case import list_case_document_ids, load_case
 from ..config import Scenario
-from ..agents.tools_agent.settings import FINANCE_TOOL_ALLOWLIST
 from .memory import configuration_fingerprint, new_thread_id
 from .runner import AgentRunOptions, run_turn
 

@@ -3,6 +3,7 @@
 No Streamlit calls here. Each agent keeps its own StateGraph, settings, nodes,
 permissions and tools; the runner only chooses one builder and invokes it.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -10,12 +11,12 @@ from typing import Any, Literal
 
 from langchain_core.messages import HumanMessage
 
-from ..agents.tools_agent.graph import build_graph as build_tools_graph
-from ..agents.tools_agent.settings import FINANCE_TOOL_ALLOWLIST, ToolsAgentSettings
-from ..agents.rag_agent.graph import build_graph as build_rag_graph
-from ..agents.rag_agent.settings import RAGAgentSettings
 from ..agents.hybrid_agent.graph import build_graph as build_hybrid_graph
 from ..agents.hybrid_agent.settings import HybridAgentSettings
+from ..agents.rag_agent.graph import build_graph as build_rag_graph
+from ..agents.rag_agent.settings import RAGAgentSettings
+from ..agents.tools_agent.graph import build_graph as build_tools_graph
+from ..agents.tools_agent.settings import FINANCE_TOOL_ALLOWLIST, ToolsAgentSettings
 from .memory import hybrid_followup_question, optional_checkpointer
 
 AgentKind = Literal["tools", "rag", "hybrid"]
@@ -63,7 +64,10 @@ def make_settings(options: AgentRunOptions) -> Any:
 
 
 def compile_selected_graph(
-    agent: AgentKind, settings: Any, case: Any, checkpointer: Any | None,
+    agent: AgentKind,
+    settings: Any,
+    case: Any,
+    checkpointer: Any | None,
 ) -> Any:
     """Call the original build_graph of the selected agent; no graph duplication."""
     builders = {
@@ -90,27 +94,47 @@ def initial_state(agent: AgentKind, question: str, period: str) -> dict[str, Any
     if agent == "tools":
         return {
             "messages": [HumanMessage(content=question)],
-            "trace": [], "calls_used": 0, "model_turns": 0,
-            "stop_reason": "", "refused": False,
+            "trace": [],
+            "calls_used": 0,
+            "model_turns": 0,
+            "stop_reason": "",
+            "refused": False,
         }
     if agent == "rag":
         return {
             "messages": [HumanMessage(content=question)],
-            "trace": [], "retrieved": [], "calls_used": 0, "model_turns": 0,
-            "search_failures": 0, "stale_searches": 0,
-            "last_new_passages": 0, "evidence_review": {},
-            "stop_reason": "", "refused": False,
+            "trace": [],
+            "retrieved": [],
+            "calls_used": 0,
+            "model_turns": 0,
+            "search_failures": 0,
+            "stale_searches": 0,
+            "last_new_passages": 0,
+            "evidence_review": {},
+            "stop_reason": "",
+            "refused": False,
         }
     if agent == "hybrid":
         return {
-            "question": question, "period": period,
-            "route": "", "delegation_task": "", "visited_agents": [],
-            "supervisor_turns": 0, "tool_calls_used": 0,
-            "finance_calls_used": 0, "rag_calls_used": 0,
-            "finance_answer": "", "rag_answer": "",
-            "finance_tool_results": [], "retrieved": [],
-            "evidence_review": {}, "specialist_status": {},
-            "trace": [], "answer": "", "stop_reason": "", "refused": False,
+            "question": question,
+            "period": period,
+            "route": "",
+            "delegation_task": "",
+            "visited_agents": [],
+            "supervisor_turns": 0,
+            "tool_calls_used": 0,
+            "finance_calls_used": 0,
+            "rag_calls_used": 0,
+            "finance_answer": "",
+            "rag_answer": "",
+            "finance_tool_results": [],
+            "retrieved": [],
+            "evidence_review": {},
+            "specialist_status": {},
+            "trace": [],
+            "answer": "",
+            "stop_reason": "",
+            "refused": False,
         }
     raise ValueError(f"Unknown agent: {agent}")
 
@@ -131,16 +155,23 @@ def _text_content(content: Any) -> str:
 
 def _financial_events(trace: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return [
-        {"tool": event.get("tool"), "arguments": event.get("arguments"),
-         "result": event.get("result")}
+        {
+            "tool": event.get("tool"),
+            "arguments": event.get("arguments"),
+            "result": event.get("result"),
+        }
         for event in trace
         if event.get("kind") == "tool_call" and event.get("status") == "ok"
     ]
 
 
 def run_turn(
-    *, options: AgentRunOptions, case: Any, user_question: str,
-    use_memory: bool, thread_id: str,
+    *,
+    options: AgentRunOptions,
+    case: Any,
+    user_question: str,
+    use_memory: bool,
+    thread_id: str,
 ) -> dict[str, Any]:
     """Execute exactly one turn, returning only this turn's observable results.
 
@@ -164,7 +195,8 @@ def run_turn(
         prior_trace_count = len(prior.get("trace", []))
         effective_question = (
             hybrid_followup_question(user_question, prior)
-            if options.agent == "hybrid" and use_memory else user_question
+            if options.agent == "hybrid" and use_memory
+            else user_question
         )
         result = graph.invoke(
             initial_state(options.agent, effective_question, case.period),

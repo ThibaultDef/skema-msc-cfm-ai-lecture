@@ -1,4 +1,5 @@
 """Parent state: private specialist message histories never mix with supervisor state."""
+
 from __future__ import annotations
 
 import operator

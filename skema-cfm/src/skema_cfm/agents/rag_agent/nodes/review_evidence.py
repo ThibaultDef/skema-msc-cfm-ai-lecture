@@ -1,4 +1,5 @@
 """Deterministic evidence inventory, conflict flags, and explicit stopping conditions."""
+
 from __future__ import annotations
 
 from ..settings import RAGAgentSettings
@@ -15,13 +16,19 @@ def make_review_evidence_node(settings: RAGAgentSettings):
                 "but cannot establish a revised ledger balance. Escalate for verification."
             )
             if "DOC-04" in ids or "DOC-05" in ids:
-                flags.append("Conflicting Cobalt source accounts are present: cite BOTH before escalation.")
+                flags.append(
+                    "Conflicting Cobalt source accounts are present: cite BOTH before escalation."
+                )
         if {"DOC-02", "DOC-03"} <= ids:
             flags.append(
                 "Acme's earlier expected payment date was only an estimate; "
                 "the later remittance provides no confirmed date for the unpaid balance."
             )
-        stale = 0 if state.get("last_new_passages", 0) else state.get("stale_searches", 0) + 1
+        stale = (
+            0
+            if state.get("last_new_passages", 0)
+            else state.get("stale_searches", 0) + 1
+        )
         review = {
             "source_ids": sorted(ids),
             "source_count": len(ids),
@@ -42,10 +49,14 @@ def make_review_evidence_node(settings: RAGAgentSettings):
             "evidence_review": review,
             "stale_searches": stale,
             "stop_reason": reason,
-            "trace": [{
-                "kind": "evidence_review", **review,
-                "stale_searches": stale, "stop_reason": reason,
-            }],
+            "trace": [
+                {
+                    "kind": "evidence_review",
+                    **review,
+                    "stale_searches": stale,
+                    "stop_reason": reason,
+                }
+            ],
         }
 
     return review_evidence

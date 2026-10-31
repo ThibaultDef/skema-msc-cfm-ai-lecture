@@ -1,10 +1,10 @@
 """Immutable case snapshots and explicit, in-memory student testing scenarios."""
+
 from __future__ import annotations
 
 import csv
 from dataclasses import dataclass
 from importlib.resources import files
-from pathlib import Path
 
 from .config import Scenario
 
@@ -68,13 +68,15 @@ def _load_documents() -> tuple[EvidenceDocument, ...]:
                     metadata[key] = line.partition(":")[2].strip()
         if any(key not in metadata for key in ("Document ID", "Title", "Date")):
             raise ValueError(f"Malformed source document: {document.name}")
-        docs.append(EvidenceDocument(
-            document_id=metadata["Document ID"],
-            title=metadata["Title"],
-            date=metadata["Date"],
-            filename=document.name,
-            text=text,
-        ))
+        docs.append(
+            EvidenceDocument(
+                document_id=metadata["Document ID"],
+                title=metadata["Title"],
+                date=metadata["Date"],
+                filename=document.name,
+                text=text,
+            )
+        )
     return tuple(docs)
 
 
@@ -96,15 +98,21 @@ def load_case(
     if scenario != Scenario.COBALT_CONFLICT:
         docs = tuple(d for d in docs if d.document_id != "DOC-08")
     else:
-        annotations.append("TEST SCENARIO: unverified DOC-08 is deliberately included; do not treat it as a corrected ledger.")
+        annotations.append(
+            "TEST SCENARIO: unverified DOC-08 is deliberately included; do not treat it as a corrected ledger."
+        )
 
     if scenario == Scenario.MISSING_ACME:
         docs = tuple(d for d in docs if d.document_id != "DOC-02")
-        annotations.append("TEST SCENARIO: Acme remittance (DOC-02) is withheld; avoid pretending its contents are known.")
+        annotations.append(
+            "TEST SCENARIO: Acme remittance (DOC-02) is withheld; avoid pretending its contents are known."
+        )
 
     if scenario == Scenario.UNMATCHED_BANK:
         bank = tuple(
-            {**row, "remittance_reference": ""} if row["bank_txn_id"] == "BT-004" else row
+            {**row, "remittance_reference": ""}
+            if row["bank_txn_id"] == "BT-004"
+            else row
             for row in bank
         )
         annotations.append(
@@ -113,12 +121,16 @@ def load_case(
         )
 
     if scenario == Scenario.TOOL_FAILURE:
-        annotations.append("TEST SCENARIO: first attempted tool call will fail (simulated tool outage).")
+        annotations.append(
+            "TEST SCENARIO: first attempted tool call will fail (simulated tool outage)."
+        )
 
     if selected_documents is not None:
         missing_ids = set(selected_documents) - {d.document_id for d in docs}
         if missing_ids:
-            annotations.append(f"Unavailable or excluded requested documents: {sorted(missing_ids)}")
+            annotations.append(
+                f"Unavailable or excluded requested documents: {sorted(missing_ids)}"
+            )
         docs = tuple(doc for doc in docs if doc.document_id in selected_documents)
 
     return CaseSnapshot(

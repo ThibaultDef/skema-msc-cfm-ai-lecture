@@ -1,4 +1,5 @@
 """Auditable, provider-independent message rendering (never include credentials)."""
+
 from __future__ import annotations
 
 import json
@@ -8,7 +9,11 @@ from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, Tool
 
 
 def as_text(value: Any) -> str:
-    return value if isinstance(value, str) else json.dumps(value, default=str, ensure_ascii=False)
+    return (
+        value
+        if isinstance(value, str)
+        else json.dumps(value, default=str, ensure_ascii=False)
+    )
 
 
 def serialize_messages(messages: list) -> list[dict]:

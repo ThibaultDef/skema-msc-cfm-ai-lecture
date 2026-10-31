@@ -1,4 +1,5 @@
 """Deny explicit write actions; the actual boundary is the read-only tool allowlist."""
+
 from __future__ import annotations
 
 import re
@@ -18,17 +19,28 @@ _WRITE_REQUEST = re.compile(
 
 def preflight(state: RAGAgentState) -> dict:
     question = next(
-        (as_text(m.content) for m in reversed(state["messages"]) if isinstance(m, HumanMessage)),
+        (
+            as_text(m.content)
+            for m in reversed(state["messages"])
+            if isinstance(m, HumanMessage)
+        ),
         "",
     )
     if _WRITE_REQUEST.search(question):
         return {
-            "messages": [AIMessage(content=(
-                "This classroom RAG agent is read-only. It cannot change accounting data, "
-                "contact customers or authorise payments; refer the action to treasury."
-            ))],
+            "messages": [
+                AIMessage(
+                    content=(
+                        "This classroom RAG agent is read-only. It cannot change accounting data, "
+                        "contact customers or authorise payments; refer the action to treasury."
+                    )
+                )
+            ],
             "refused": True,
             "stop_reason": "out_of_scope_request",
             "trace": [{"kind": "permission_guard", "decision": "refused"}],
         }
-    return {"refused": False, "trace": [{"kind": "permission_guard", "decision": "allowed"}]}
+    return {
+        "refused": False,
+        "trace": [{"kind": "permission_guard", "decision": "allowed"}],
+    }

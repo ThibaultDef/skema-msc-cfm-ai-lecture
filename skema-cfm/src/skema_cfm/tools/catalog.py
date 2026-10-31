@@ -1,4 +1,5 @@
 """LangChain tool definitions wrap deterministic, read-only functions only."""
+
 from __future__ import annotations
 
 from langchain_core.tools import tool
@@ -6,7 +7,12 @@ from langchain_core.tools import tool
 from ..case import CaseSnapshot
 from ..config import RunConfig
 from ..retrieval import LexicalDocumentIndex
-from .finance import lookup_open_invoices, query_bank_receipts, query_forecast, reconcile_variance
+from .finance import (
+    lookup_open_invoices,
+    query_bank_receipts,
+    query_forecast,
+    reconcile_variance,
+)
 
 
 def build_tools(case: CaseSnapshot, config: RunConfig):

@@ -9,9 +9,7 @@ from collections import Counter
 from .case import EvidenceDocument
 
 STOPWORDS = frozenset(
-    "a an and are as at be by can date did do does for from has have in is it of on or our "
-    "the their this to was were what when where which who why will with would week cash payment "
-    "payments eur document evidence find search explain investigate".split()
+    ["a", "an", "and", "are", "as", "at", "be", "by", "can", "date", "did", "do", "does", "for", "from", "has", "have", "in", "is", "it", "of", "on", "or", "our", "the", "their", "this", "to", "was", "were", "what", "when", "where", "which", "who", "why", "will", "with", "would", "week", "cash", "payment", "payments", "eur", "document", "evidence", "find", "search", "explain", "investigate"]
 )
 
 

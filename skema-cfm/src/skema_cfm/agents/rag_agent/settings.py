@@ -1,4 +1,5 @@
 """Independent RAG Agent settings. All permissions are enforced in Python."""
+
 from __future__ import annotations
 
 import os
@@ -11,7 +12,9 @@ RAG_TOOL_ALLOWLIST = ("search_documents",)
 
 @dataclass(frozen=True, slots=True)
 class RAGAgentSettings:
-    model: str = field(default_factory=lambda: os.getenv("OPENROUTER_MODEL", "openai/gpt-4o-mini"))
+    model: str = field(
+        default_factory=lambda: os.getenv("OPENROUTER_MODEL", "openai/gpt-4o-mini")
+    )
     backend: str = "openrouter"
     api_key: str | None = None
     enabled_tools: tuple[str, ...] = RAG_TOOL_ALLOWLIST
@@ -25,7 +28,9 @@ class RAGAgentSettings:
 
     def __post_init__(self) -> None:
         if self.enabled_tools != RAG_TOOL_ALLOWLIST:
-            raise ValueError("RAG Agent permits only search_documents (no finance tools).")
+            raise ValueError(
+                "RAG Agent permits only search_documents (no finance tools)."
+            )
         if self.backend not in {"openrouter", "openai_compatible"}:
             raise ValueError("Unsupported backend.")
         if not 1 <= self.retrieval_k <= 8:
@@ -41,8 +46,10 @@ class RAGAgentSettings:
         if self.selected_documents is not None:
             if len(self.selected_documents) != len(set(self.selected_documents)):
                 raise ValueError("Duplicate source identifiers are not allowed.")
-            if any(not d.startswith("DOC-") or len(d) != 6 or not d[4:].isdigit()
-                   for d in self.selected_documents):
+            if any(
+                not d.startswith("DOC-") or len(d) != 6 or not d[4:].isdigit()
+                for d in self.selected_documents
+            ):
                 raise ValueError("Source identifiers must follow DOC-NN.")
 
     def to_run_config(self, scenario: Scenario) -> RunConfig:

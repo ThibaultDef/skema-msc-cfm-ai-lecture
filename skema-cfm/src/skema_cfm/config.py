@@ -1,4 +1,5 @@
 """Configuration types; permissions and limits are *not* model-controlled."""
+
 from __future__ import annotations
 
 import os
@@ -21,7 +22,12 @@ class Scenario(str, Enum):
     TOOL_FAILURE = "tool_failure"
 
 
-FINANCE_TOOLS = ("query_forecast", "query_bank_receipts", "lookup_open_invoices", "reconcile_variance")
+FINANCE_TOOLS = (
+    "query_forecast",
+    "query_bank_receipts",
+    "lookup_open_invoices",
+    "reconcile_variance",
+)
 RETRIEVAL_TOOL = "search_documents"
 ALL_TOOLS = FINANCE_TOOLS + (RETRIEVAL_TOOL,)
 
@@ -37,7 +43,9 @@ ARCHITECTURE_TOOLS: dict[Architecture, frozenset[str]] = {
 class RunConfig:
     architecture: Architecture = Architecture.HYBRID_AGENT
     scenario: Scenario = Scenario.STANDARD
-    model: str = field(default_factory=lambda: os.getenv("OPENROUTER_MODEL", "openai/gpt-4o-mini"))
+    model: str = field(
+        default_factory=lambda: os.getenv("OPENROUTER_MODEL", "openai/gpt-4o-mini")
+    )
     backend: str = "openrouter"
     api_key: str | None = None
     max_tool_calls: int = 6
@@ -48,7 +56,9 @@ class RunConfig:
 
     def __post_init__(self) -> None:
         if not 1 <= self.max_tool_calls <= 6:
-            raise ValueError("max_tool_calls must be in [1, 6] (teaching harness control).")
+            raise ValueError(
+                "max_tool_calls must be in [1, 6] (teaching harness control)."
+            )
         if not 1 <= self.retrieval_k <= 8:
             raise ValueError("retrieval_k must be in [1, 8].")
         if self.backend not in {"openrouter", "openai_compatible"}:
@@ -57,16 +67,25 @@ class RunConfig:
         if self.enabled_tools is not None:
             unknown = set(self.enabled_tools) - allowed
             if unknown:
-                raise ValueError(f"Tools not permitted for {self.architecture.value}: {sorted(unknown)}")
+                raise ValueError(
+                    f"Tools not permitted for {self.architecture.value}: {sorted(unknown)}"
+                )
         if self.selected_documents is not None and any(
-            not doc.startswith("DOC-") or len(doc) != 6 for doc in self.selected_documents
+            not doc.startswith("DOC-") or len(doc) != 6
+            for doc in self.selected_documents
         ):
             raise ValueError("Document identifiers must use the DOC-NN format.")
 
     @property
     def permitted_tools(self) -> tuple[str, ...]:
         allowed = ARCHITECTURE_TOOLS[self.architecture]
-        return tuple(name for name in (self.enabled_tools or (ALL_TOOLS if self.enabled_tools is None else ())) if name in allowed)
+        return tuple(
+            name
+            for name in (
+                self.enabled_tools or (ALL_TOOLS if self.enabled_tools is None else ())
+            )
+            if name in allowed
+        )
 
     @property
     def credential(self) -> str | None:

@@ -1,4 +1,5 @@
 """Coarse guard; the specialist tool allowlists are the actual authorization boundary."""
+
 from __future__ import annotations
 
 import re
@@ -18,9 +19,17 @@ def preflight(state: HybridAgentState) -> dict:
             "refused": True,
             "answer": "This educational treasury agent is read-only. No account modifications, payments, or customer communications are permitted. Refer the request to a human analyst.",
             "stop_reason": "out_of_scope_request",
-            "trace": [{"agent": "hybrid_agent", "kind": "permission_guard", "decision": "refused"}],
+            "trace": [
+                {
+                    "agent": "hybrid_agent",
+                    "kind": "permission_guard",
+                    "decision": "refused",
+                }
+            ],
         }
     return {
         "refused": False,
-        "trace": [{"agent": "hybrid_agent", "kind": "permission_guard", "decision": "allowed"}],
+        "trace": [
+            {"agent": "hybrid_agent", "kind": "permission_guard", "decision": "allowed"}
+        ],
     }

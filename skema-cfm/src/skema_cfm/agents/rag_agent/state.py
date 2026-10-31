@@ -1,4 +1,5 @@
 """Private state for this RAG Agent; no reliance on the Tools Agent state."""
+
 from __future__ import annotations
 
 import operator

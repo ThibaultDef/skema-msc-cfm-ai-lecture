@@ -1,4 +1,5 @@
 """Small, trace-safe message serialization helpers."""
+
 from __future__ import annotations
 
 import json
@@ -8,7 +9,11 @@ from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, Tool
 
 
 def as_text(content: Any) -> str:
-    return content if isinstance(content, str) else json.dumps(content, ensure_ascii=False, default=str)
+    return (
+        content
+        if isinstance(content, str)
+        else json.dumps(content, ensure_ascii=False, default=str)
+    )
 
 
 def serialize_messages(messages: list) -> list[dict]:

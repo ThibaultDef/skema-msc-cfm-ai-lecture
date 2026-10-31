@@ -6,14 +6,16 @@ for the complete lifetime of the LangGraph invoke/get_state operations.
 
 SQLite checkpoints persist *entire graph state*, not just chat messages.
 """
+
 from __future__ import annotations
 
 import json
 import os
 import re
+from collections.abc import Iterator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Iterator
+from typing import Any
 from uuid import uuid4
 
 
@@ -25,10 +27,16 @@ def new_thread_id(agent: str) -> str:
 
 
 def configuration_fingerprint(
-    *, agent: str, scenario: str, use_memory: bool, model: str,
-    max_tool_calls: int, enabled_tools: tuple[str, ...],
+    *,
+    agent: str,
+    scenario: str,
+    use_memory: bool,
+    model: str,
+    max_tool_calls: int,
+    enabled_tools: tuple[str, ...],
     selected_documents: tuple[str, ...] | None,
-    retrieval_k: int, finance_tool_budget: int | None,
+    retrieval_k: int,
+    finance_tool_budget: int | None,
     student_instructions: str,
 ) -> str:
     """Identify settings that must not share the same SQLite conversation.
@@ -36,18 +44,24 @@ def configuration_fingerprint(
     Credentials are deliberately excluded. They must never reach traces or
     downloaded conversation metadata.
     """
-    return json.dumps({
-        "agent": agent,
-        "scenario": scenario,
-        "memory": use_memory,
-        "model": model,
-        "max_tool_calls": max_tool_calls,
-        "tools": list(enabled_tools),
-        "docs": list(selected_documents) if selected_documents is not None else None,
-        "retrieval_k": retrieval_k,
-        "finance_tool_budget": finance_tool_budget if agent == "hybrid" else None,
-        "student_instructions": student_instructions,
-    }, ensure_ascii=False, sort_keys=True)
+    return json.dumps(
+        {
+            "agent": agent,
+            "scenario": scenario,
+            "memory": use_memory,
+            "model": model,
+            "max_tool_calls": max_tool_calls,
+            "tools": list(enabled_tools),
+            "docs": list(selected_documents)
+            if selected_documents is not None
+            else None,
+            "retrieval_k": retrieval_k,
+            "finance_tool_budget": finance_tool_budget if agent == "hybrid" else None,
+            "student_instructions": student_instructions,
+        },
+        ensure_ascii=False,
+        sort_keys=True,
+    )
 
 
 def database_path() -> Path:
@@ -56,7 +70,11 @@ def database_path() -> Path:
     Set SKEMA_CFM_CHECKPOINT_DB to use a different writable file path.
     """
     supplied = os.getenv("SKEMA_CFM_CHECKPOINT_DB", "").strip()
-    path = Path(supplied).expanduser() if supplied else Path(".local/cfm_checkpoints.sqlite")
+    path = (
+        Path(supplied).expanduser()
+        if supplied
+        else Path(".local/cfm_checkpoints.sqlite")
+    )
     return path.resolve()
 
 
@@ -107,10 +125,13 @@ def hybrid_followup_question(current_question: str, prior_state: dict[str, Any])
     # reject an unrelated follow-up. In that case carry only topic keywords.
     if _WRITE_REQUEST.search(context):
         customers = [
-            name for name in ("Acme", "Beta", "Cobalt", "Delta")
+            name
+            for name in ("Acme", "Beta", "Cobalt", "Delta")
             if re.search(rf"\b{name}\b", context, flags=re.IGNORECASE)
         ]
-        context = "Earlier exchange discussed: " + (", ".join(customers) or "cash receipts")
+        context = "Earlier exchange discussed: " + (
+            ", ".join(customers) or "cash receipts"
+        )
     return (
         "PRIOR CONVERSATION (for resolving references only; NOT verified financial "
         "or documentary evidence):\n" + context + "\n\n"

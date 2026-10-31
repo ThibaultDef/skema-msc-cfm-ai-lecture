@@ -1,4 +1,5 @@
 """Build precisely one document-only retrieval tool against approved case documents."""
+
 from __future__ import annotations
 
 from langchain_core.tools import tool
@@ -19,7 +20,8 @@ def build_document_search_tool(case: CaseSnapshot, settings: RAGAgentSettings):
             )
     permitted = (
         tuple(doc for doc in case.documents if doc.document_id in selected)
-        if selected is not None else case.documents
+        if selected is not None
+        else case.documents
     )
     index = LexicalDocumentIndex(permitted)
 

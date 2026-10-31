@@ -1,4 +1,5 @@
 """Tool Agent settings: independent, strict and finance-only."""
+
 from __future__ import annotations
 
 import os
@@ -16,7 +17,9 @@ FINANCE_TOOL_ALLOWLIST: tuple[str, ...] = (
 
 @dataclass(frozen=True, slots=True)
 class ToolsAgentSettings:
-    model: str = field(default_factory=lambda: os.getenv("OPENROUTER_MODEL", "openai/gpt-4o-mini"))
+    model: str = field(
+        default_factory=lambda: os.getenv("OPENROUTER_MODEL", "openai/gpt-4o-mini")
+    )
     backend: str = "openrouter"
     api_key: str | None = None
     enabled_tools: tuple[str, ...] = FINANCE_TOOL_ALLOWLIST
@@ -30,7 +33,9 @@ class ToolsAgentSettings:
         if not 1 <= self.max_model_turns <= 12:
             raise ValueError("max_model_turns must be between 1 and 12.")
         if not self.enabled_tools:
-            raise ValueError("A Tools Agent requires at least one enabled finance tool.")
+            raise ValueError(
+                "A Tools Agent requires at least one enabled finance tool."
+            )
         if len(self.enabled_tools) != len(set(self.enabled_tools)):
             raise ValueError("Duplicate tool names are not permitted.")
         unknown = set(self.enabled_tools) - set(FINANCE_TOOL_ALLOWLIST)

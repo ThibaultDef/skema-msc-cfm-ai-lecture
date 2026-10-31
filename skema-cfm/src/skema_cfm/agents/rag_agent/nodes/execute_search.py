@@ -1,4 +1,5 @@
 """Execute only approved document searches; record source IDs, dates and limits."""
+
 from __future__ import annotations
 
 import json
@@ -10,7 +11,9 @@ from ..settings import RAGAgentSettings
 from ..state import RAGAgentState
 
 
-def make_execute_search_node(search_tool, settings: RAGAgentSettings, scenario: Scenario):
+def make_execute_search_node(
+    search_tool, settings: RAGAgentSettings, scenario: Scenario
+):
     def execute_search(state: RAGAgentState) -> dict:
         requests = state["messages"][-1].tool_calls
         used = state.get("calls_used", 0)
@@ -27,13 +30,19 @@ def make_execute_search_node(search_tool, settings: RAGAgentSettings, scenario: 
 
             if used >= settings.max_tool_calls:
                 status = "blocked_budget"
-                payload = {"status": status, "error": "Search budget exhausted; not executed."}
+                payload = {
+                    "status": status,
+                    "error": "Search budget exhausted; not executed.",
+                }
             else:
                 used += 1  # Failed, denied and invalid requests consume the budget.
                 if name != "search_documents" or not isinstance(args, dict):
                     status = "denied"
                     failures += 1
-                    payload = {"status": status, "error": "Only search_documents is permitted."}
+                    payload = {
+                        "status": status,
+                        "error": "Only search_documents is permitted.",
+                    }
                 else:
                     try:
                         if scenario == Scenario.TOOL_FAILURE and used == 1:
@@ -55,16 +64,24 @@ def make_execute_search_node(search_tool, settings: RAGAgentSettings, scenario: 
                             "next_step": "Retry with a valid search within budget or ask a human.",
                         }
 
-            messages.append(ToolMessage(
-                content=json.dumps(payload, ensure_ascii=False, default=str),
-                tool_call_id=tool_call_id,
-                name=name or "unknown_tool",
-            ))
-            trace.append({
-                "kind": "tool_call", "tool": name, "arguments": args,
-                "status": status, "result": payload,
-                "call_index": used, "max_tool_calls": settings.max_tool_calls,
-            })
+            messages.append(
+                ToolMessage(
+                    content=json.dumps(payload, ensure_ascii=False, default=str),
+                    tool_call_id=tool_call_id,
+                    name=name or "unknown_tool",
+                )
+            )
+            trace.append(
+                {
+                    "kind": "tool_call",
+                    "tool": name,
+                    "arguments": args,
+                    "status": status,
+                    "result": payload,
+                    "call_index": used,
+                    "max_tool_calls": settings.max_tool_calls,
+                }
+            )
         return {
             "messages": messages,
             "trace": trace,
