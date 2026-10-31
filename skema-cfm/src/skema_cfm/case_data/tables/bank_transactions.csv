@@ -1,0 +1,5 @@
+bank_txn_id,value_date,customer,amount_eur,bank_reference,remittance_reference
+BT-001,2026-09-22,Acme,80000,BNK-AC-882,AC-104-partial
+BT-002,2026-09-24,Beta,150000,BNK-BE-104,BE-220
+BT-003,2026-09-25,Cobalt,80000,BNK-CO-772,CO-317-partial
+BT-004,2026-09-26,Delta,100000,BNK-DE-616,DE-411-and-DE-489

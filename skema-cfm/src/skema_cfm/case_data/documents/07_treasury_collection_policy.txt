@@ -1,0 +1,7 @@
+Document ID: DOC-07
+Title: Treasury collection and dispute procedure
+Date: 2026-08-01
+
+Unpaid balances with disputed delivery or incomplete supporting records must be referred to the receivables analyst. Do not issue a credit note or change an invoice based solely on a customer's email. A collection estimate without a written payment date should remain labelled as unconfirmed.
+
+This procedure describes internal handling rules. It does not resolve any customer-specific dispute.

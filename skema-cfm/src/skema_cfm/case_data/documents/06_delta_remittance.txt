@@ -1,0 +1,7 @@
+Document ID: DOC-06
+Title: Delta remittance advice
+Date: 2026-09-26
+
+Delta's EUR 100,000 bank transfer includes EUR 50,000 for invoice DE-411, which was included in the reporting-week forecast, and an additional EUR 50,000 advance for invoice DE-489, due in the following week.
+
+This document supports the allocation described by Delta. The bank transaction confirms that EUR 100,000 was received. The advance explains a favourable timing variance of EUR 50,000 for this week; it does not show that similar advances will recur.

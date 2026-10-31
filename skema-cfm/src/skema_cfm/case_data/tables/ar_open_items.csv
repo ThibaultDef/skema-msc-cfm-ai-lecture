@@ -1,0 +1,6 @@
+invoice_id,customer,due_date,invoice_amount_eur,open_amount_eur,status,last_updated
+AC-104,Acme,2026-09-25,200000,120000,Partially paid; remaining amount open,2026-09-27
+BE-220,Beta,2026-09-25,150000,0,Paid,2026-09-27
+CO-317,Cobalt,2026-09-24,100000,20000,Under review; customer dispute noted,2026-09-27
+DE-411,Delta,2026-09-26,50000,0,Paid,2026-09-27
+DE-489,Delta,2026-10-05,50000,0,Advance received; not included in reporting-week forecast,2026-09-27

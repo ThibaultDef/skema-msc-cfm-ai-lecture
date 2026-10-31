@@ -1,0 +1,7 @@
+Document ID: DOC-01
+Title: Weekly cash forecast methodology
+Date: 2026-09-18
+
+The weekly forecast covers expected customer receipts with forecast dates from 21 to 27 September 2026. Amounts are based on open invoices and the collections team's latest expected-payment dates. Customer advances are excluded unless they are confirmed and recorded before the forecast is locked. A forecast date is an estimate, not a promise of payment.
+
+This document explains the forecast basis and its limits. It does not confirm that any particular customer paid or will pay.

@@ -1,0 +1,7 @@
+Document ID: DOC-08
+Title: Unverified Cobalt follow-up note (test-only)
+Date: 2026-09-28
+
+A short, unverified follow-up note says that the amount withheld by Cobalt may be EUR 15,000 rather than EUR 20,000. The note does not identify the author, provide an invoice calculation, or include an updated ledger record.
+
+This note is intentionally unverified and conflicts with DOC-04 and DOC-05. It must not silently replace the EUR 20,000 ledger balance. Ask the receivables analyst to verify the amount against the invoice and delivery record.

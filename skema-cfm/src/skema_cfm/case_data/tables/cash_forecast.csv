@@ -1,0 +1,5 @@
+forecast_id,period_start,period_end,customer,invoice_id,forecast_amount_eur,forecast_status
+F-001,2026-09-21,2026-09-27,Acme,AC-104,200000,Included in weekly forecast
+F-002,2026-09-21,2026-09-27,Beta,BE-220,150000,Included in weekly forecast
+F-003,2026-09-21,2026-09-27,Cobalt,CO-317,100000,Included in weekly forecast
+F-004,2026-09-21,2026-09-27,Delta,DE-411,50000,Included in weekly forecast

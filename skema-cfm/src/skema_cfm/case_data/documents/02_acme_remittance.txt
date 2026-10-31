@@ -1,0 +1,7 @@
+Document ID: DOC-02
+Title: Acme remittance advice
+Date: 2026-09-22
+
+Acme confirms a bank transfer of EUR 80,000 against invoice AC-104. The remaining EUR 120,000 is pending internal approval. Acme has not confirmed a payment date for the balance.
+
+This document supports the partial payment and the customer's stated approval status. It does not prove that the balance will be paid, identify a confirmed payment date, or establish why approval is pending.

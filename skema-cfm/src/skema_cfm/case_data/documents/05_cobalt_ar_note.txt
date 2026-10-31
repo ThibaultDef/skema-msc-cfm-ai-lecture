@@ -1,0 +1,7 @@
+Document ID: DOC-05
+Title: Cobalt receivables note
+Date: 2026-09-27
+
+The receivables ledger shows EUR 20,000 open on CO-317. The item is marked under review and a dispute is noted. No credit note has been issued as of 27 September.
+
+This document confirms the ledger balance and review status at the recorded date. It does not resolve the commercial dispute or determine whether the open amount is ultimately collectible.
