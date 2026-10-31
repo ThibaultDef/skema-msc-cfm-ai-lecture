@@ -30,3 +30,9 @@ ui = [
 
 [project.scripts]
 skema-cfm-ui = "skema_cfm.ui.cli:main"
+
+[tool.setuptools.package-data]
+skema_cfm_agents = [
+    "case_data/tables/*.csv",
+    "case_data/documents/*.txt",
+]
