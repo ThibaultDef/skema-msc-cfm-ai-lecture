@@ -8,7 +8,7 @@ from importlib.resources import files
 
 from .config import Scenario
 
-CASE_PACKAGE = "skema_cfm_agents.case_data"
+CASE_PACKAGE = "skema_cfm.case_data"
 TABLE_FILES = ("cash_forecast.csv", "bank_transactions.csv", "ar_open_items.csv")
 
 
@@ -110,9 +110,11 @@ def load_case(
 
     if scenario == Scenario.UNMATCHED_BANK:
         bank = tuple(
-            {**row, "remittance_reference": ""}
-            if row["bank_txn_id"] == "BT-004"
-            else row
+            (
+                {**row, "remittance_reference": ""}
+                if row["bank_txn_id"] == "BT-004"
+                else row
+            )
             for row in bank
         )
         annotations.append(

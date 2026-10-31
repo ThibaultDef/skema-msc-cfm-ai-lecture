@@ -1,4 +1,4 @@
-# skema_cfm_agents/ui/cli.py
+# skema_cfm/ui/cli.py
 
 import subprocess
 import sys

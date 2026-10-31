@@ -6,13 +6,13 @@ pytest.importorskip("langgraph")
 pytest.importorskip("langchain_core")
 
 from langchain_core.messages import AIMessage
-from skema_cfm_agents.agents.hybrid_agent import (
+from skema_cfm.agents.hybrid_agent import (
     HybridAgentSettings,
     run_hybrid_agent,
 )
-from skema_cfm_agents.case import load_case
-from skema_cfm_agents.config import Scenario
-from skema_cfm_agents.tools.finance import reconcile_variance
+from skema_cfm.case import load_case
+from skema_cfm.config import Scenario
+from skema_cfm.tools.finance import reconcile_variance
 
 
 class FakeModel:
