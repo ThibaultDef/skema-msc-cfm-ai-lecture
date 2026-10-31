@@ -235,6 +235,23 @@ def render_case_records(case: Any) -> None:
             st.dataframe(list(case.ar), use_container_width=True)
 
 
+def render_documents(case: Any) -> None:
+    with st.expander("Inspect original documents (not a rag agent)"):
+        selected_document_id = st.selectbox(
+            "Available documents",
+            tuple(doc.document_id for doc in case.documents),
+            index=None,
+            placeholder="Select a document...",
+            disabled=(not case.documents),
+        )
+        if selected_document_id:
+            filtered_documents = [
+                doc for doc in case.documents if doc.document_id == selected_document_id
+            ]
+            selected_document = filtered_documents[0]
+            st.markdown(selected_document.text, width="stretch")
+
+
 def render_download(selection: UISelection) -> None:
     if not st.session_state.turns:
         return
@@ -298,6 +315,7 @@ def main() -> None:
         st.caption("Example: " + DEFAULT_QUESTION)
 
     render_case_records(case)
+    render_documents(case)
     render_chat_history()
 
     question = st.chat_input(
