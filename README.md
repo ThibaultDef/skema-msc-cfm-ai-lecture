@@ -1,10 +1,12 @@
-# SKEMA CFM AI Agents
+# SKEMA CFM AI
 
 **An educational, inspectable AI-agent workbench for cash-receipts variance investigations.**
 
 This Python project supports the **MSc Corporate Financial Management** teaching case at SKEMA Business School. Students investigate one fictional reporting week using approved financial records and supporting documents, compare three LangGraph architectures, and evaluate the quality and limitations of their conclusions.
 
 > **Teaching prototype only.** All case data are fictional. The application is read-only and must not be connected to live treasury or accounting systems without a separate security, access-control, and governance review.
+
+**Student launch (after installation):** `skema-cfm-ui` — see [Quick start: launch from the CLI](#quick-start-launch-from-the-cli).
 
 ## The case
 
@@ -61,60 +63,98 @@ The hybrid supervisor routes tasks to specialized subgraphs. Its initial design 
 
 The project depends on LangGraph, LangChain, `langchain-openrouter`, Streamlit, and `python-dotenv`. Optional conversation persistence requires `langgraph-checkpoint-sqlite`.
 
-## Install and run locally
+## Quick start: launch from the CLI
 
-From the project root:
+The **recommended way to start the student interface is `skema-cfm-ui`**. The command is provided by the Python package and launches the bundled Streamlit application; users do not need to locate or run a `streamlit_app.py` file.
+
+### 1. Install the package
+
+**From PyPI (after the package has been published):**
+
+```bash
+python -m pip install skema-cfm
+```
+
+**From a local source checkout (for development or before publication):**
 
 ```bash
 python -m venv .venv
-```
 
-Activate the environment:
-
-```bash
 # macOS / Linux
 source .venv/bin/activate
 
-# Windows PowerShell
+# Windows PowerShell (instead of the line above)
 # .venv\Scripts\Activate.ps1
+
+python -m pip install -e ".[test]"
 ```
 
-Install the package and SQLite checkpoint support:
+If you want to enable SQLite conversation memory and it is not already installed as a project dependency, also run:
 
 ```bash
-python -m pip install -e ".[test]"
 python -m pip install langgraph-checkpoint-sqlite
 ```
 
-Create `.env` in the project root:
+### 2. Configure OpenRouter
+
+You need an OpenRouter API key. You can enter it in the application sidebar, or set `OPENROUTER_API_KEY` in the environment before launching the app.
+
+```bash
+# macOS / Linux
+export OPENROUTER_API_KEY="your_openrouter_api_key"
+```
+
+```powershell
+# Windows PowerShell
+$env:OPENROUTER_API_KEY="your_openrouter_api_key"
+```
+
+You can also set `OPENROUTER_MODEL` to override the default model. For local source development, a `.env` file may be used if it is discoverable by `python-dotenv`:
 
 ```dotenv
-OPENROUTER_API_KEY=replace_with_your_openrouter_key
+OPENROUTER_API_KEY=your_openrouter_api_key
 OPENROUTER_MODEL=openai/gpt-4o-mini
 # Optional: override SQLite location
 # SKEMA_CFM_CHECKPOINT_DB=.local/cfm_checkpoints.sqlite
 ```
 
-**Never commit `.env` or API keys to version control.** Model availability, pricing, and tool-calling support depend on the selected OpenRouter provider/model.
+**Never commit API keys or `.env` files to version control.** Provider availability, pricing and tool-calling support depend on the selected OpenRouter model.
 
-Start the modular Streamlit application:
+### 3. Launch the application
+
+```bash
+skema-cfm-ui
+```
+
+Streamlit will display a local URL (typically `http://localhost:8501`) and normally open your browser. This works from any working directory **provided the installed distribution includes the CLI entry point and its bundled Streamlit launcher**.
+
+To change Streamlit server settings, pass its options through the CLI:
+
+```bash
+skema-cfm-ui --server.port 8502
+skema-cfm-ui --server.headless true
+```
+
+### Developer alternative: run the repository entry point
+
+If you are working **from a source checkout**, you can still use:
 
 ```bash
 streamlit run streamlit_app.py
 ```
 
-Then open the URL shown in your terminal (typically `http://localhost:8501`). The root-level `streamlit_app.py` is intentionally a thin entry point importing `skema_cfm_agents.ui.app.main`.
+This is a development alternative, **not** the main installation or launch procedure for PyPI users. The root `streamlit_app.py` remains a thin bootstrap around `skema_cfm_agents.ui.app.main`.
 
-### Installing from PyPI (once published)
+### CLI packaging configuration
 
-If this project is published as `skema-cfm-agents`, installation would be:
+For the `skema-cfm-ui` command to be installed automatically, the published project's `pyproject.toml` must expose the console-script entry point:
 
-```bash
-python -m pip install skema-cfm-agents
-python -m pip install langgraph-checkpoint-sqlite
+```toml
+[project.scripts]
+skema-cfm-ui = "skema_cfm_agents.ui.cli:main"
 ```
 
-A convenient `skema-cfm` console command has been **discussed as a distribution option**, but the launcher must be verified/updated to target the modular Streamlit UI before presenting it as the supported student entry point. Until then, `streamlit run streamlit_app.py` is the documented source-checkout command. A PyPI-ready CLI should locate a bundled Streamlit entry script using package-relative paths and pass it to `python -m streamlit run`.
+The launcher in `ui/cli.py` should run the packaged `ui/streamlit_entry.py` through `python -m streamlit run`. Include both files in the built wheel and declare Streamlit among the installation dependencies. The CLI implementation and its packaging should be tested using an **installed wheel**, not only an editable source checkout.
 
 ## Using the interface
 
@@ -147,7 +187,7 @@ By default the local SQLite file is written to `.local/cfm_checkpoints.sqlite` r
 ```text
 .
 ├── pyproject.toml
-├── streamlit_app.py                  # Streamlit bootstrap
+├── streamlit_app.py                  # Optional source-checkout entry point
 ├── src/skema_cfm_agents/
 │   ├── agents/
 │   │   ├── tools_agent/
@@ -168,7 +208,9 @@ By default the local SQLite file is written to `.local/cfm_checkpoints.sqlite` r
 │   ├── ui/
 │   │   ├── app.py                    # Streamlit presentation
 │   │   ├── runner.py                 # Graph selection and turn execution
-│   │   └── memory.py                 # Thread IDs and SQLite saver lifecycle
+│   │   ├── memory.py                 # Thread IDs and SQLite saver lifecycle
+│   │   ├── cli.py                    # `skema-cfm-ui` console-script target
+│   │   └── streamlit_entry.py        # Bundled Streamlit launch script
 │   ├── tools/                         # Reusable finance functions
 │   ├── case.py                        # Case/scenario loading
 │   ├── retrieval.py                   # Local document retrieval
@@ -236,7 +278,11 @@ Students should retain prompts, settings, retrieved evidence, tool traces, resul
 
 ## Troubleshooting
 
-**`ModuleNotFoundError: skema_cfm_agents`** — Install the project in the active environment with `python -m pip install -e .`.
+**`skema-cfm-ui: command not found` (or command not recognized)** — Ensure the package is installed in the active Python environment and its `pyproject.toml` declares `[project.scripts]` with `skema-cfm-ui = "skema_cfm_agents.ui.cli:main"`. Reinstall the package after adding or changing the entry point. On some systems, the Python environment's scripts directory must be on `PATH`.
+
+**`ModuleNotFoundError: skema_cfm_agents`** — Install the package in the active environment (`python -m pip install skema-cfm` after publication, or `python -m pip install -e .` from source).
+
+**CLI starts but Streamlit cannot find its app script** — Confirm `ui/streamlit_entry.py` is included in the installed wheel and that `ui/cli.py` resolves its path relative to the installed package, rather than the working directory.
 
 **SQLite checkpoint package missing** — Install `langgraph-checkpoint-sqlite` or disable conversation memory.
 
@@ -256,4 +302,4 @@ See the instructor-provided `docs/project_brief.pdf` for full assignment require
 
 ---
 
-**Status:** Modular teaching prototype. The three-agent backend and Streamlit UI have been developed in separate iterations; validate the fully assembled package, packaging/CLI, and live OpenRouter integration before releasing it to students or publishing it to PyPI.
+**Status:** Modular teaching prototype with a CLI-oriented launch workflow (`skema-cfm-ui`). Before distributing to students or publishing on PyPI, verify the installed wheel includes its CLI and Streamlit entry scripts, and validate all three agents, SQLite memory, and live OpenRouter tool calls end to end.
